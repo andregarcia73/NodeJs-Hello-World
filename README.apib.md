@@ -10,21 +10,17 @@ You can get more information on:
 [https://github.com/andregarcia73/NodeJs-Hello-World](https://github.com/andregarcia73/NodeJs-Hello-World)
 
 
-## GET endpoint [/MyGetEndPoint]
+## GET endpoint [/MyEndPoint]
 
 ### Endpoint with HelloWorld response [GET]
 
 + Response 200 (application/json)
 
         {
-            "RequestEndPoint": "/MyGetEndPoint",
-            "RequestMethod": "GET",
-            "RequestServerDateTime": "Thu Sep 26 2019 20:15:26 GMT+0000 (Coordinated Universal Time)",
-            "ResponseStatus": "OK",
             "ResponseMessage": "Hello World"
         }
 
-## POST endpoint [/MyPostEndPoint]
+## POST endpoint [/MyEndPoint]
 
 ### Endpoint with number times 2 [POST]
 
@@ -35,9 +31,5 @@ You can get more information on:
 + Response 200 (application/json)
 
         {
-            "RequestEndPoint": "/MyPostEndPoint",
-            "RequestMethod": "POST",
-            "RequestServerDateTime": "Thu Sep 26 2019 20:33:35 GMT+0000 (Coordinated Universal Time)",
-            "ResponseStatus": "OK",
-            "ResponseMessage": "InputNumber = 2, ResultNumber = 4"
+            "ResponseMessage": "4"
         }

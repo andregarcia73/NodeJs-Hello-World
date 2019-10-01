@@ -26,22 +26,22 @@ GET
 
 	Open a browser in your computer then type (double-click on _AppTest.html and experience)
 
-		http://localhost:9000/MyGetEndPoint
+		http://localhost:9000/MyEndPoint
 
 	You should see:
 
-		{"RequestEndPoint":"/MyGetEndPoint", "RequestMethod":"GET", "RequestServerDateTime":"...", "ResponseStatus":"OK", "ResponseMessage":"Hello World"}
+		{"ResponseMessage":"Hello World"}
 
 POST
 
 	Post a message in
 
-		http://localhost:9000/MyPostEndPoint (double-click on _AppTest.html and experience)
+		http://localhost:9000/MyEndPoint (double-click on _AppTest.html and experience)
 
 		with desired "quantidade" parameter (accepts only positive integer values)
 
 	You should see:
-		{"RequestEndPoint":"/MyPostEndPoint", "RequestMethod":"POST", "RequestServerDateTime":"...", "ResponseStatus":"OK", "ResponseMessage":"InputNumber = NNN, ResultNumber = 2 * NNN"}
+		{"ResponseMessage":"2"}
 
 You can try those requests in:
 
@@ -89,7 +89,3 @@ This application is published on the URL:
 ### `_Node_Desenv.ahk`
 
 Are files for development purposes only.
-
-
-
-

@@ -2,7 +2,7 @@
 //###########################################################################
 //##
 //## Hello World Application
-//## 24/09/19
+//## 01/10/19
 //##
 //###########################################################################
 //###########################################################################
@@ -14,212 +14,211 @@
 	//##			Server listening on Port: 9000
 	//##		GET
 	//##			Open a browser in your computer then type (double-click on _AppTest.html and experience)
-	//##				http://localhost:9000/MyGetEndPoint
+	//##				http://localhost:9000/MyEndPoint
 	//##			You should see:
-	//##				{"RequestEndPoint":"/MyGetEndPoint", "RequestMethod":"GET", "RequestServerDateTime":"...", "ResponseStatus":"OK", "ResponseMessage":"Hello World"}
+	//##				{"ResponseMessage":"Hello World"}
 	//##		POST
 	//##			Post a message in
-	//##				http://localhost:9000/MyPostEndPoint (double-click on _AppTest.html and experience)
+	//##				http://localhost:9000/MyEndPoint (double-click on _AppTest.html and experience)
 	//##				with desired "quantidade" parameter (accepts only positive integer values)
 	//##			You should see:
-	//##				{"RequestEndPoint":"/MyPostEndPoint", "RequestMethod":"POST", "RequestServerDateTime":"...", "ResponseStatus":"OK", "ResponseMessage":"InputNumber = NNN, ResultNumber = 2 * NNN"}
+	//##				{"ResponseMessage":"2 * quantidade"}
 	//##
 	//###########################################################################
 	//###########################################################################
 
-	//---------------------------------------------------------------------------
-	// Global "Public" Variables
-	//---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
+    // Global "Public" Variables
+    //---------------------------------------------------------------------------
 
-		var G_DesiredGetEndPoint	= "/MyGetEndPoint";
-		var G_DesiredPostEndPoint	= "/MyPostEndPoint";
+        // Global Variables into a single global object (one single global variable)
+        var G                       = {};
 
-	//---------------------------------------------------------------------------
-	// Main program
-	//---------------------------------------------------------------------------
+        // DesiredEndPoint (single Endpoint)
+        G.DesiredEndPoint           = "/MyEndPoint";
 
-		// Runs protected against errors
-		try
-			{
-			//	var B				= C;							// try-catch error simulation
-			Main					();
-			}
-		catch (e)
-			{
-			// Here the server will go down, but, at least, will show the error on system console
-			console.log				("Main try-catch error: " + e);
-			}
+        // Error Codes
+        G.E_200_OK                  = 200;                          // OK
+        G.E_400_Bad_Request         = 400;                          // Bad Request
+        G.E_500_IntServError        = 500;                          // Internal Server Error
 
-	//---------------------------------------------------------------------------
-	// Main function
-	//---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
+    // Main program
+    //---------------------------------------------------------------------------
 
-	function Main()
-		{
-		// Creates Node http object
-		var Http					= require('http');
+        // Runs protected against errors
+        try
+            {
+            //  var B               = C;                            // try-catch error simulation
+            Main                    ();
+            }
+        catch (e)
+            {
+            // Here the server will go down, but, at least, will show the error on system console
+            console.log             ("Main try-catch error: " + e);
+            }
 
-		// Defines the HTTP Server Port to be listened
-		// process.env.PORT will mean only on Heroku
-		// (on development environment, this application will listen Port 9000)
-		var Port					= process.env.PORT || 9000;
+    //---------------------------------------------------------------------------
+    // Main function
+    //---------------------------------------------------------------------------
 
-		// Creates HTTP Server
-		var Server					= Http.createServer(function(Req, Res)
-			{
-			// On each client browser request this method will be called (only after starts listening port below)
+    function Main()
+        {
+        // Creates Node http object
+        var Http                    = require('http');
 
-			// Attaches App_DoResEnd property on Res object (to be changeable in IsPostQuantidade function)
-			Res.App_DoResEnd		= ! false;
+        // Defines the HTTP Server Port to be listened
+        // process.env.PORT will mean only on Heroku
+        // (on development environment, this application will listen Port 9000)
+        var Port                    = process.env.PORT || 9000;
 
-			// For debug purpose
-			Req.TotalData			= "";
+        // Creates HTTP Server
+        var Server                  = Http.createServer(function(Req, Res)
+            {
+            // On each client browser request this method will be called (only after starts listening port below)
 
-			// Starts Response
-			Res.writeHead			(200, {'Content-Type': 'text/html; charset=utf-8'});
+            // For debug purpose
+            Req.TotalData           = "";
 
-			// Runs protected against errors
-			try
-				{
-				OnClientRequest		(Req, Res);
-				}
-			catch (e)
-				{
-				// Response Write the error instead of console.log
-				// Here the server will NOT go down
-				Res.write			("<hr><h1>OnClientRequest error !</h1><br><b>" + e + "</b><hr>" + new Date() + "<hr>");
-				}
+            // Runs protected against errors
+            try
+                {
+                OnClientRequest     (Req, Res);
+                }
+            catch (e)
+                {
+                // You can try this situation uncomenting the line:
+                //      var B                   = D;
+                //      on OnClientRequest(Req, Res) method below
+                // Sends only HTTP Error Code 500 "Internal Server Error"
+                // Will be handled according browser implementation
+                SendStringResponse  (Req, Res, G.E_500_IntServError, "");
+                }
 
-			// Ends Response here ! (only if Res.App_DoResEnd allow)
-			if (Res.App_DoResEnd)
-				Res.end				();
-			});
+            });
 
-		// Starts Listening Server Port
-		Server.listen				(Port, function()
-			{
-			console.log				("Server listening on Port: " + Port);
-			});
-		};
+        // Starts Listening Server Port
+        Server.listen               (Port, function()
+            {
+            console.log             ("Server listening on Port: " + Port);
+            });
+        };
 
-	//---------------------------------------------------------------------------
-	// OnClientRequest (On each client browser request this method will be called)
-	//---------------------------------------------------------------------------
+    //---------------------------------------------------------------------------
+    // OnClientRequest (On each client browser request this method will be called)
+    //---------------------------------------------------------------------------
 
-	function OnClientRequest(Req, Res)
-		{
-		// try-catch error simulation inside the Server event
-		//	var B					= D;
+    function OnClientRequest(Req, Res)
+        {
+        // try-catch error simulation inside the Server event
+        //  var B                   = D;
 
-		// IsHelloWorld ?
-		if (IsHelloWorld(Req, Res))
-			return;
+        // Desired EndPoint ?
+        if (Req.url != G.DesiredEndPoint)
+            {
+            // Responses an Error
+            SendStringResponse      (Req, Res, G.E_400_Bad_Request, "");
+            return;
+            }
 
-		// IsPostQuantidade ?
-		if (IsPostQuantidade(Req, Res))
-			return;
+        // IsHelloWorld ?
+        if (IsHelloWorld(Req, Res))
+            return;
 
-		// Responses an Error
-		SendStringResponse			(Req, Res, "Error", "Unknown request");
-		};
+        // IsPostQuantidade ?
+        if (IsPostQuantidade(Req, Res))
+            return;
 
-	//---------------------------------------------------------------------------
-	// SendStringResponse
-	//---------------------------------------------------------------------------
+        // Responses an Error
+        SendStringResponse          (Req, Res, G.E_400_Bad_Request, "");
+        };
 
-	function SendStringResponse(Req, Res, Status, Message)
-		{
-		Res.write					("{\"RequestEndPoint\":\"" + Req.url + "\", \"RequestMethod\":\"" + Req.method + "\", \"RequestServerDateTime\":\"" + (new Date()) + "\", \"ResponseStatus\":\"" + Status + "\", \"ResponseMessage\":\"" + Message + "\"}");
-		// Optional Response
-		//	Res.write				("{\"RequestEndPoint\":\"" + Req.url + "\", \"RequestMethod\":\"" + Req.method + "\", \"RequestServerDateTime\":\"" + (new Date()) + "\", \"ResponseStatus\":\"" + Status + "\", \"ResponseMessage\":\"" + Message + "\", \"Req.TotalData\":\"" + Req.TotalData + "\"}");
-		};
+    //---------------------------------------------------------------------------
+    // SendStringResponse
+    //---------------------------------------------------------------------------
 
-	//---------------------------------------------------------------------------
-	// IsHelloWorld
-	//---------------------------------------------------------------------------
+    function SendStringResponse(Req, Res, Status, Message)
+        {
 
-	function IsHelloWorld(Req, Res)
-		{
-		// Desired EndPoint ?
-		if (Req.url != G_DesiredGetEndPoint)
-			return false;
+        // Starts Response
+        Res.writeHead               (Status, {'Content-Type': 'text/html; charset=utf-8'});
 
-		// Is GET ?
-		if (Req.method != "GET")
-			return false;
+        if (Message != "")
+            Res.write               ("{\"ResponseMessage\":\"" + Message + "\"}");
+        // Optional Responses
+        //  Res.write               ("{\"RequestEndPoint\":\"" + Req.url + "\", \"RequestMethod\":\"" + Req.method + "\", \"RequestServerDateTime\":\"" + (new Date()) + "\", \"ResponseStatus\":\"" + Status + "\", \"ResponseMessage\":\"" + Message + "\"}");
+        //  Res.write               ("{\"RequestEndPoint\":\"" + Req.url + "\", \"RequestMethod\":\"" + Req.method + "\", \"RequestServerDateTime\":\"" + (new Date()) + "\", \"ResponseStatus\":\"" + Status + "\", \"ResponseMessage\":\"" + Message + "\", \"Req.TotalData\":\"" + Req.TotalData + "\"}");
 
-		// Response Write a JSON Hello World message
-		SendStringResponse			(Req, Res, "OK", "Hello World");
+        // Ends Response
+        Res.end                     ();
+        };
 
-		// OK !
-		return ! false;
-		};
+    //---------------------------------------------------------------------------
+    // IsHelloWorld
+    //---------------------------------------------------------------------------
 
-	//---------------------------------------------------------------------------
-	// IsPostQuantidade
-	//---------------------------------------------------------------------------
+    function IsHelloWorld(Req, Res)
+        {
+        // Is GET ?
+        if (Req.method != "GET")
+            return false;
 
-	function IsPostQuantidade(Req, Res)
-		{
-		// Desired EndPoint ?
-		if (Req.url != G_DesiredPostEndPoint)
-			return false;
+        // Response Write a JSON Hello World message
+        SendStringResponse          (Req, Res, G.E_200_OK, "Hello World");
 
-		// Is POST ?
-		if (Req.method != "POST")
-			return false;
+        // OK !
+        return ! false;
+        };
 
-		// Response Write a JSON POST QUANTIDADE (for debug purpose only)
-		//	SendStringResponse		(Req, Res, "OK", "POST QUANTIDADE");
-		//	return ! false;
+    //---------------------------------------------------------------------------
+    // IsPostQuantidade
+    //---------------------------------------------------------------------------
 
-		// The below statement avoids Res.end to be called on the Main function
-		// Res.end will be called on OnEnd Event (below)
-		Res.App_DoResEnd			=   false;
+    function IsPostQuantidade(Req, Res)
+        {
+        // Is POST ?
+        if (Req.method != "POST")
+            return false;
 
-		// OnData
-		Req.TotalData				= "";
-		Req.on("data", function(ChunkData)
-			{
-			// For debug purpose
-			//	Res.write			("<p>ChunkData.length:" + ChunkData.length);
-			Req.TotalData		   += ChunkData;
-			});
+        // OnData
+        Req.TotalData               = "";
+        Req.on("data", function(ChunkData)
+            {
+            // For debug purpose
+            //  Res.write           ("<p>ChunkData.length:" + ChunkData.length);
+            Req.TotalData          += ChunkData;
+            });
 
-		// OnEnd
-		Req.on("end", function()
-			{
-			// For debug purpose
-			//	SendStringResponse	(Req, Res, "OK", "Req.TotalData = " + Req.TotalData);
+        // OnEnd
+        Req.on("end", function()
+            {
+            // Extracts quantidade
+            var RE                  = new RegExp("quantidade=([0-9]+)&", "g");  // Try as first or middle parameter
+            var ArrResult           = RE.exec(Req.TotalData);
+            if (ArrResult == null)
+                {
+                RE                  = new RegExp("quantidade=([0-9]+)$", "g");  // Try as last parameter
+                ArrResult           = RE.exec(Req.TotalData);
+                }
 
-			// Extracts quantidade
-			var RE					= new RegExp("quantidade=([0-9]+)&", "g");	// Try as first or middle parameter
-			var ArrResult			= RE.exec(Req.TotalData);
-			if (ArrResult == null)
-				{
-				RE					= new RegExp("quantidade=([0-9]+)$", "g");	// Try as last parameter
-				ArrResult			= RE.exec(Req.TotalData);
-				}
+            // Not Found ?
+            if (ArrResult == null)
+                {
+                SendStringResponse  (Req, Res, G.E_400_Bad_Request, "");
+                // Alternative to see the error reason
+                //SendStringResponse(Req, Res, G.E_200_OK,          "Invalid input positive number OR POST does not have [quantidade] parameter.");
+                }
+            else
+                {
+                var InputNumber     = Number(RegExp.$1);    // Casts no Number
+                var ResultNumber    = 2 * InputNumber;      // Times 2 as an example
+                SendStringResponse  (Req, Res, G.E_200_OK, ResultNumber);
+                }
+            });
 
-			// Not Found ?
-			if (ArrResult == null)
-				{
-				SendStringResponse	(Req, Res, "Error", "Invalid input positive number OR POST does not have [quantidade] parameter.");
-				}
-			else
-				{
-				var InputNumber		= Number(RegExp.$1);	// Casts no Number
-				var ResultNumber	= 2 * InputNumber;		// Times 2 as an example
-				SendStringResponse	(Req, Res, "OK", "InputNumber = " + InputNumber + ", ResultNumber = " + ResultNumber);
-				}
-
-			// end !
-			Res.end					();
-			});
-
-		// OK !
-		return ! false;
-		};
+        // OK !
+        return ! false;
+        };
 
 //###########################################################################
 //###########################################################################

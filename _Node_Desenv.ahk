@@ -2,7 +2,7 @@
 ;===========================================================================
 ;==
 ;== Node Desenv - Para agilizar o desenvolvimento do Hello World Test
-;== 25/09/19
+;== 25/09/19 - Aparentemente só funciona no IE
 ;==
 ;===========================================================================
 ;===========================================================================
@@ -16,8 +16,7 @@ SendMode Input ; Recommended for new scripts due to its superior speed and relia
 
 		G_WinName_Node				:= "C:\WINDOWS\system32\cmd.exe"
 		G_WinName_AppTest			:= "Hello World Test"
-		G_WinName_AppTest_GET		:= "http://localhost:9000/MyGetEndPoint"
-		G_WinName_AppTest_POST		:= "http://localhost:9000/MyPostEndPoint"
+		G_WinName_AppTest_GET_POST	:= "http://localhost:9000/MyEndPoint"
 
 	;---------------------------------------------------------------------------
 	; Show Error Msg
@@ -77,13 +76,7 @@ SendMode Input ; Recommended for new scripts due to its superior speed and relia
 			Send, {F5}
 			}
 
-		if WindowFocus(G_WinName_AppTest_GET)
-			{
-			Send, {ALTDOWN}{LEFT}{ALTUP}
-			Send, {F5}
-			}
-
-		if WindowFocus(G_WinName_AppTest_POST)
+		if WindowFocus(G_WinName_AppTest_GET_POST)
 			{
 			Send, {ALTDOWN}{LEFT}{ALTUP}
 			Send, {F5}
