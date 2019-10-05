@@ -88,11 +88,11 @@
             catch (e)
                 {
                 // You can try this situation uncomenting the line:
-                //      var B                   = D;
-                //      on OnClientRequest(Req, Res) method below
+                //	var B			= D;
+                //	on OnClientRequest(Req, Res) method below
                 // Sends only HTTP Error Code 500 "Internal Server Error"
                 // Will be handled according browser implementation
-                SendStringResponse  (Req, Res, G.E_500_IntServError, "");
+                SendStringResponse  (Req, Res, G.E_500_IntServError, null);
                 }
 
             });
@@ -117,7 +117,7 @@
         if (Req.url != G.DesiredEndPoint)
             {
             // Responses an Error
-            SendStringResponse      (Req, Res, G.E_400_Bad_Request, "");
+            SendStringResponse      (Req, Res, G.E_400_Bad_Request, null);
             return;
             }
 
@@ -130,24 +130,21 @@
             return;
 
         // Responses an Error
-        SendStringResponse          (Req, Res, G.E_400_Bad_Request, "");
+        SendStringResponse          (Req, Res, G.E_400_Bad_Request, null);
         };
 
     //---------------------------------------------------------------------------
     // SendStringResponse
     //---------------------------------------------------------------------------
 
-    function SendStringResponse(Req, Res, Status, Message)
+    function SendStringResponse(Req, Res, Status, RespObj)
         {
 
         // Starts Response
-        Res.writeHead               (Status, {'Content-Type': 'text/html; charset=utf-8'});
+        Res.writeHead               (Status, {'Content-Type': 'application/json'});
 
-        if (Message != "")
-            Res.write               ("{\"ResponseMessage\":\"" + Message + "\"}");
-        // Optional Responses
-        //  Res.write               ("{\"RequestEndPoint\":\"" + Req.url + "\", \"RequestMethod\":\"" + Req.method + "\", \"RequestServerDateTime\":\"" + (new Date()) + "\", \"ResponseStatus\":\"" + Status + "\", \"ResponseMessage\":\"" + Message + "\"}");
-        //  Res.write               ("{\"RequestEndPoint\":\"" + Req.url + "\", \"RequestMethod\":\"" + Req.method + "\", \"RequestServerDateTime\":\"" + (new Date()) + "\", \"ResponseStatus\":\"" + Status + "\", \"ResponseMessage\":\"" + Message + "\", \"Req.TotalData\":\"" + Req.TotalData + "\"}");
+        if (RespObj != null)
+            Res.write               (JSON.stringify(RespObj));
 
         // Ends Response
         Res.end                     ();
@@ -163,8 +160,13 @@
         if (Req.method != "GET")
             return false;
 
+		// Creates RespObj
+		var RespObj					= {
+			"ResponseMessage"		: "Hello World"
+			};
+
         // Response Write a JSON Hello World message
-        SendStringResponse          (Req, Res, G.E_200_OK, "Hello World");
+		SendStringResponse          (Req, Res, G.E_200_OK, RespObj);
 
         // OK !
         return ! false;
@@ -192,28 +194,25 @@
         // OnEnd
         Req.on("end", function()
             {
-            // Extracts quantidade
-            var RE                  = new RegExp("quantidade=([0-9]+)&", "g");  // Try as first or middle parameter
-            var ArrResult           = RE.exec(Req.TotalData);
-            if (ArrResult == null)
-                {
-                RE                  = new RegExp("quantidade=([0-9]+)$", "g");  // Try as last parameter
-                ArrResult           = RE.exec(Req.TotalData);
-                }
+			//	Req.TotalData		= '{"quantidade":"33"}';		// For debug purposes
 
-            // Not Found ?
-            if (ArrResult == null)
-                {
-                SendStringResponse  (Req, Res, G.E_400_Bad_Request, "");
-                // Alternative to see the error reason
-                //SendStringResponse(Req, Res, G.E_200_OK,          "Invalid input positive number OR POST does not have [quantidade] parameter.");
-                }
-            else
-                {
-                var InputNumber     = Number(RegExp.$1);    // Casts no Number
-                var ResultNumber    = 2 * InputNumber;      // Times 2 as an example
-                SendStringResponse  (Req, Res, G.E_200_OK, ResultNumber);
-                }
+			// Runs protected against parse error
+			try
+				{
+				// Parse
+				var ReqObj			= JSON.parse(Req.TotalData);
+
+				// Creates RespObj
+				var RespObj				= {
+					"ResponseMessage"	: "" + (ReqObj.quantidade * 2)
+					};
+				SendStringResponse  (Req, Res, G.E_200_OK, RespObj);
+				}
+			catch (e)
+				{
+				SendStringResponse  (Req, Res, G.E_400_Bad_Request, null);
+				}
+
             });
 
         // OK !

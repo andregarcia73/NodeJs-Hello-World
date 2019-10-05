@@ -17,7 +17,6 @@ rem rem heroku logs --tail
 rem heroku login
 rem heroku git:clone -a pure-depths-91789
 rem cd pure-depths-91789
-
 rem git add .
 rem git commit -am "make it better"
 rem git push heroku master
