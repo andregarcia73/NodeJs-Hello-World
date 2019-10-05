@@ -6,26 +6,26 @@
 //##
 //###########################################################################
 //###########################################################################
-	//##
-	//##	Instructions
-	//##		Run this NodeJS application in your computer:
-	//##			$ node HelloWorld.js		(on Windows double-click on _Console_Node.bat)
-	//##		You should see in your console:
-	//##			Server listening on Port: 9000
-	//##		GET
-	//##			Open a browser in your computer then type (double-click on _AppTest.html and experience)
-	//##				http://localhost:9000/MyEndPoint
-	//##			You should see:
-	//##				{"ResponseMessage":"Hello World"}
-	//##		POST
-	//##			Post a message in
-	//##				http://localhost:9000/MyEndPoint (double-click on _AppTest.html and experience)
-	//##				with desired "quantidade" parameter (accepts only positive integer values)
-	//##			You should see:
-	//##				{"ResponseMessage":"2 * quantidade"}
-	//##
-	//###########################################################################
-	//###########################################################################
+    //##
+    //##    Instructions
+    //##        Run this NodeJS application in your computer:
+    //##            $ node HelloWorld.js        (on Windows double-click on _Console_Node.bat)
+    //##        You should see in your console:
+    //##            Server listening on Port: 9000
+    //##        GET
+    //##            Open a browser in your computer then type (double-click on _AppTest.html and experience)
+    //##                http://localhost:9000/MyEndPoint
+    //##            You should see:
+    //##                {"ResponseMessage":"Hello World"}
+    //##        POST
+    //##            Post a message in
+    //##                http://localhost:9000/MyEndPoint (double-click on _AppTest.html and experience)
+    //##                with desired "quantidade" parameter (accepts only positive integer values)
+    //##            You should see:
+    //##                {"ResponseMessage":"2 * quantidade"}
+    //##
+    //###########################################################################
+    //###########################################################################
 
     //---------------------------------------------------------------------------
     // Global "Public" Variables
@@ -88,8 +88,8 @@
             catch (e)
                 {
                 // You can try this situation uncomenting the line:
-                //	var B			= D;
-                //	on OnClientRequest(Req, Res) method below
+                //  var B           = D;
+                //  on OnClientRequest(Req, Res) method below
                 // Sends only HTTP Error Code 500 "Internal Server Error"
                 // Will be handled according browser implementation
                 SendStringResponse  (Req, Res, G.E_500_IntServError, null);
@@ -160,13 +160,13 @@
         if (Req.method != "GET")
             return false;
 
-		// Creates RespObj
-		var RespObj					= {
-			"ResponseMessage"		: "Hello World"
-			};
+        // Creates RespObj
+        var RespObj                 = {
+            "ResponseMessage"       : "Hello World"
+            };
 
         // Response Write a JSON Hello World message
-		SendStringResponse          (Req, Res, G.E_200_OK, RespObj);
+        SendStringResponse          (Req, Res, G.E_200_OK, RespObj);
 
         // OK !
         return ! false;
@@ -194,24 +194,24 @@
         // OnEnd
         Req.on("end", function()
             {
-			//	Req.TotalData		= '{"quantidade":"33"}';		// For debug purposes
+            //  Req.TotalData       = '{"quantidade":"33"}';        // For debug purposes
 
-			// Runs protected against parse error
-			try
-				{
-				// Parse
-				var ReqObj			= JSON.parse(Req.TotalData);
+            // Runs protected against parse error
+            try
+                {
+                // Parse
+                var ReqObj          = JSON.parse(Req.TotalData);
 
-				// Creates RespObj
-				var RespObj				= {
-					"ResponseMessage"	: "" + (ReqObj.quantidade * 2)
-					};
-				SendStringResponse  (Req, Res, G.E_200_OK, RespObj);
-				}
-			catch (e)
-				{
-				SendStringResponse  (Req, Res, G.E_400_Bad_Request, null);
-				}
+                // Creates RespObj
+                var RespObj             = {
+                    "ResponseMessage"   : "" + (ReqObj.quantidade * 2)
+                    };
+                SendStringResponse  (Req, Res, G.E_200_OK, RespObj);
+                }
+            catch (e)
+                {
+                SendStringResponse  (Req, Res, G.E_400_Bad_Request, null);
+                }
 
             });
 
