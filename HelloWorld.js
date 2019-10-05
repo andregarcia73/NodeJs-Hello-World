@@ -202,6 +202,13 @@
                 // Parse
                 var ReqObj          = JSON.parse(Req.TotalData);
 
+                // Test for Invalid JSON's
+                if (! ReqObj.quantidade)
+                    {
+                    SendStringResponse(Req, Res, G.E_400_Bad_Request, null);
+                    return;
+                    }
+
                 // Creates RespObj
                 var RespObj             = {
                     "ResponseMessage"   : "" + (ReqObj.quantidade * 2)
