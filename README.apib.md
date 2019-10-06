@@ -9,8 +9,7 @@ You can get more information on:
 
 [https://github.com/andregarcia73/NodeJs-Hello-World](https://github.com/andregarcia73/NodeJs-Hello-World)
 
-
-## GET endpoint [/MyEndPoint]
+## Endpoint options [/MyEndPoint]
 
 ### Endpoint with HelloWorld response [GET]
 
@@ -20,14 +19,14 @@ You can get more information on:
             "ResponseMessage": "Hello World"
         }
 
-## POST endpoint [/MyEndPoint]
-
 ### Endpoint with number times 2 [POST]
 
 + Request
 
-        quantidade=2
-
+        {
+            "quantidade": "4"
+        }
+        
 + Response 200 (application/json)
 
         {
